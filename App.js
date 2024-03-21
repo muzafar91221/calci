@@ -3,7 +3,7 @@
 // const Forecast ="api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}"
 
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, StatusBar, ImageBackground } from 'react-native';
 import * as Location from 'expo-location';
 import ForecastItem from './components/ForeCastItem';
 
@@ -52,10 +52,10 @@ const App = () => {
     const lon = location?.coords.longitude;
 
     const result = await fetch(
-      `${Base_Url}/forecast?lat=${lat}&lon=${lon}&appid=${Open_Weather_key}`
+      `${Base_Url}/forecast?lat=${lat}&lon=${lon}&appid=${Open_Weather_key}&units=metric`
     );
     const data = await result.json();
-    console.log(data);
+    console.log(JSON.stringify(data, null, 2));
     setForecast(data.list);
   };
 
@@ -64,29 +64,52 @@ const App = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.location}>{weather?.name}</Text>
-      <Text style={styles.temp}>{Math.floor(weather?.main?.temp)}°</Text>
+    <ImageBackground source={{uri:'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHdlYXRoZXJ8ZW58MHx8MHx8fDA%3D'}} style={styles.container}>
+      <View style={{
+        flex: 1, alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <Text style={styles.location}>{weather?.name}</Text>
+        <Text style={styles.temp}>{Math.floor(weather?.main?.temp)}°</Text>
+        <Text style={{fontSize:15,color:'gray'}}>feels_like {Math.floor(weather?.main?.feels_like)}°</Text>
+        <Text style={{fontSize:15,color:'gray'}}>humidity {Math.floor(weather?.main?.humidity)}°</Text>
+        
 
-      <FlatList
-        horizontal
-        data={forecast}
-        renderItem={({item}) => <ForecastItem forecast={item}/>}
+
+
+        <FlatList
+          horizontal
+          data={forecast}
+          style={{ height: 160, flexGrow: 0, marginTop: 'auto' }}
+          renderItem={({ item }) => <ForecastItem forecast={item} />}
+          contentContainerStyle={{ gap: 8, paddingHorizontal:10}}
         />
-    
 
-    </View>
+
+        <StatusBar style='auto'></StatusBar>
+
+
+      </View>
+    </ImageBackground>
+
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
+
+
+
+
+
   },
   location: {
-    fontSize: 22,
+    fontSize: 62,
+    color:'gray',
+    fontWeight:'bold',
+
   },
   temp: {
     fontSize: 70,
